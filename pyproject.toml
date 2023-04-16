@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "NEMO-external-users"
+version = "0.0.1"
+description = "NEMO plugin for handling external accounts."
+readme = "README.md"
+authors = [
+    { name="Michal Machnicki", email="michal@machnicki.io" },
+]
+license = { file="LICENSE" }
+classifiers = [
+    'Environment :: Web Environment',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: System Administrators',
+    'Natural Language :: English',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.8',
+    'Topic :: Internet :: WWW/HTTP',
+    'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+]
+
+[project.urls]
+"Homepage" = "https://github.com/maakleerplek/NEMO-external-users"
