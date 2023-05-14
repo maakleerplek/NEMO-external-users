@@ -1,5 +1,5 @@
 # NEMO External Users
-NEMO plugin which allows users to create their own accounts.
+NEMO plugin allowing users to create and manage their own accounts.
 
 ## Installation
 

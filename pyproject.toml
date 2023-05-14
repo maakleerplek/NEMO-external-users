@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "NEMO-external-users"
-description = "NEMO plugin for handling external accounts."
+description = "NEMO plugin allowing users to create and manage their own accounts."
 readme = "README.md"
 authors = [
     { name="Michal Machnicki", email="michal@machnicki.io" },
