@@ -4,6 +4,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from NEMO.models import User as NemoUser
+from NEMO.models import Project, Tool, ToolQualificationGroup
 
 
 class ExternalUserAttributes(models.Model):
@@ -97,6 +98,78 @@ class ExternalUser(AbstractBaseUser):
         return self.is_admin
 
 
+def settings_handler(instance):
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_PROJECTS'):
+        for project_name in settings.NEMO_EXTERNAL_USERS_NEW_USER_PROJECTS:
+            instance.nemo_user.projects.add(Project.objects.filter(name=project_name).first())
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_TOOLS'):
+         for tool_name in settings.NEMO_EXTERNAL_USERS_NEW_USER_TOOLS:
+             tool = Tool.objects.filter(name=tool_name).first()
+             if tool:
+                 tool.user_set.add(instance.nemo_user.id)
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_TOOL_QUALIFICATION_GROUPS'):
+        for group_name in settings.NEMO_EXTERNAL_USERS_NEW_USER_TOOL_QUALIFICATION_GROUPS:
+            try:
+                tools = ToolQualificationGroup.objects.filter(name=group_name).first().tools.all()
+            except AttributeError as e:
+                print(f"Tools qualification group '{group_name}' doesn't exist")
+                continue
+
+            for tool in tools:
+                tool.user_set.add(instance.nemo_user.id)
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_IS_STAFF'):
+        if settings.NEMO_EXTERNAL_USERS_NEW_USER_IS_STAFF:
+            instance.nemo_user.is_staff = True
+        else:
+            instance.nemo_user.is_staff = False
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_IS_USER_OFFICE'):
+        if settings.NEMO_EXTERNAL_USERS_NEW_USER_IS_USER_OFFICE:
+            instance.nemo_user.is_user_office = True
+        else:
+            instance.nemo_user.is_user_office = False
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_IS_ACCOUNTING_OFFICER'):
+        if settings.NEMO_EXTERNAL_USERS_NEW_USER_IS_ACCOUNTING_OFFICER:
+            instance.nemo_user.is_accounting_officer = True
+        else:
+            instance.nemo_user.is_accounting_officer = False
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_IS_FACILITY_MANAGER'):
+        if settings.NEMO_EXTERNAL_USERS_NEW_USER_IS_FACILITY_MANAGER:
+            instance.nemo_user.is_facility_manager = True
+        else:
+            instance.nemo_user.is_facility_manager = False
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_IS_ADMINISTRATOR'):
+        if settings.NEMO_EXTERNAL_USERS_NEW_USER_IS_ADMINISTRATOR:
+            instance.nemo_user.is_superuser = True
+        else:
+            instance.nemo_user.is_superuser = False
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_IS_TECHNICIAN'):
+        if settings.NEMO_EXTERNAL_USERS_NEW_USER_IS_TECHNICIAN:
+            instance.nemo_user.is_technician = True
+        else:
+            instance.nemo_user.is_technician = False
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_IS_SERVICE_PERSONNEL'):
+        if settings.NEMO_EXTERNAL_USERS_NEW_USER_IS_SERVICE_PERSONNEL:
+            instance.nemo_user.is_service_personnel = True
+        else:
+            instance.nemo_user.is_service_personnel = False
+
+    if hasattr(settings, 'NEMO_EXTERNAL_USERS_NEW_USER_TRAINING_REQUIRED'):
+        if settings.NEMO_EXTERNAL_USERS_NEW_USER_TRAINING_REQUIRED:
+            instance.nemo_user.training_required = True
+        else:
+            instance.nemo_user.training_required = False
+
+    return instance
+
 @receiver(post_save, sender=ExternalUser)
 def create_related_nemo_user(sender, instance, **kwargs):
     if instance.is_active and instance.nemo_user is None:
@@ -106,7 +179,9 @@ def create_related_nemo_user(sender, instance, **kwargs):
             last_name=instance.last_name,
             email=instance.email,
         )
+        instance = settings_handler(instance)
         instance.nemo_user.is_active = instance.is_active
+        instance.nemo_user.save()
         instance.save()
 
 
