@@ -37,7 +37,9 @@ Homepage = "https://github.com/maakleerplek/NEMO-external-users"
 path = "NEMO_external_users/__init__.py"
 
 [tool.hatch.build.targets.sdist]
-exclude = []
+exclude = [
+    "/.github",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["NEMO_external_users"]
