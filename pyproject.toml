@@ -7,7 +7,10 @@ name = "NEMO-external-users"
 description = "NEMO plugin allowing users to create and manage their own accounts."
 readme = "README.md"
 authors = [
-    { name="Michal Machnicki", email="michal@machnicki.io" },
+    { name="High Tech Lab", email="hightechlab@maakleerplekleuven.be" },
+]
+maintainers = [
+    { name="Michal Machnicki", email="michal.machnicki@maakleerplekleuven.be" },
 ]
 license = { file="LICENSE" }
 requires-python = ">=3.8"
